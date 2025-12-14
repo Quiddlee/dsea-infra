@@ -1,0 +1,14 @@
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+.eslintcache
+
+# Local env files
+.env
+!.env.example
+**/tsconfig.tsbuildinfo

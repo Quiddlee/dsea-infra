@@ -1,0 +1,6 @@
+[submodule "services/ai-core"]
+	path = services/ai-core
+	url = https://github.com/Quiddlee/dsea-ai-core.git
+[submodule "services/telegram-interface"]
+	path = services/telegram-interface
+	url = https://github.com/Quiddlee/dsea-telegram-interface.git
