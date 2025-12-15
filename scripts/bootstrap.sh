@@ -32,6 +32,15 @@ AI_CORE_PORT="${AI_CORE_PORT:-3000}"
 : "${POSTGRES_DB:?Missing POSTGRES_DB in .env}"
 : "${POSTGRES_USER:?Missing POSTGRES_USER in .env}"
 : "${POSTGRES_PASSWORD:?Missing POSTGRES_PASSWORD in .env}"
+: "${POSTGRES_PORT:?Missing POSTGRES_PORT in .env}"
+: "${OPENAI_API_KEY:?Missing OPENAI_API_KEY in .env}"
+: "${TELEGRAM_BOT_TOKEN:?Missing TELEGRAM_BOT_TOKEN in .env}"
+
+if [[ -z "${INTERNAL_SHARED_SECRET:-}" ]]; then
+  echo "❌ INTERNAL_SHARED_SECRET is not set."
+  echo "👉 Generate one with: openssl rand -hex 32"
+  exit 1
+fi
 
 # 5. Generate docker env files
 AI_CORE_ENV="$ROOT_DIR/services/ai-core/.env.docker"
@@ -41,14 +50,21 @@ echo "• Generating $AI_CORE_ENV"
 cat > "$AI_CORE_ENV" <<EOF
 PORT=${AI_CORE_PORT}
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
-OPENAI_API_KEY=${OPENAI_API_KEY:?Missing OPENAI_API_KEY in .env}
+OPENAI_API_KEY=${OPENAI_API_KEY}
+AI_CORE_INTERNAL_TOKEN=${INTERNAL_SHARED_SECRET}
 EOF
 
 echo "• Generating $TG_ENV"
 cat > "$TG_ENV" <<EOF
+DB_NAME=${POSTGRES_DB}
+DB_USER=${POSTGRES_USER}
+DB_PASSWORD=${POSTGRES_PASSWORD}
+DB_HOST=postgres
+DB_PORT=5432
+
 AI_CORE_URL=http://ai-core:${AI_CORE_PORT}
-DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
-TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:?Missing TELEGRAM_BOT_TOKEN in .env}
+AI_CORE_INTERNAL_TOKEN=${INTERNAL_SHARED_SECRET}
+TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
 EOF
 
 echo "✅ Bootstrap completed"
