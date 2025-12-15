@@ -1,5 +1,6 @@
 version: "3.9"
 
+name: dsea
 services:
   postgres:
     image: postgres:18.1-alpine
@@ -26,8 +27,7 @@ services:
       - ../services/ai-core/.env.docker
     volumes:
       - ../services/ai-core:/ai-core
-      # reserve anonymous volume to not copy node_modules between host and docker
-      #      - /app/node_modules
+      - /ai-core/node_modules
       - pnpm_store:/pnpm/store
     ports:
       - "${AI_CORE_PORT}:3000"
