@@ -19,9 +19,9 @@ services:
       timeout: 5s
       retries: 5
 
-  ai-core:
+  ai-core-api:
     build: ../services/ai-core
-    container_name: dsea-ai-core
+    container_name: dsea-core-api
     working_dir: /ai-core
     env_file:
       - ../services/ai-core/.env.docker
@@ -35,6 +35,22 @@ services:
       postgres:
         condition: service_healthy
 
+  ai-core-worker:
+    build: ../services/ai-core
+    container_name: dsea-ai-core-worker
+    working_dir: /ai-core
+    env_file:
+      - ../services/ai-core/.env.docker
+    volumes:
+      - ../services/ai-core:/ai-core
+      - /ai-core/node_modules
+      - pnpm_store:/pnpm/store
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: pnpm worker:dev
+    restart: unless-stopped
+
   telegram-interface:
     build: ../services/telegram-interface
     container_name: dsea-telegram-interface
@@ -44,7 +60,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ai-core:
+      ai-core-api:
         condition: service_started
 
 volumes:
