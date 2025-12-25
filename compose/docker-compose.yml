@@ -29,6 +29,7 @@ services:
       - ../services/ai-core:/ai-core
       - /ai-core/node_modules
       - pnpm_store:/pnpm/store
+      - artifacts:/data/artifacts
     ports:
       - "${AI_CORE_PORT}:3000"
     depends_on:
@@ -45,6 +46,7 @@ services:
       - ../services/ai-core:/ai-core
       - /ai-core/node_modules
       - pnpm_store:/pnpm/store
+      - artifacts:/data/artifacts
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,6 +65,23 @@ services:
       ai-core-api:
         condition: service_started
 
+  crawler:
+    build:
+      context: ../services/telegram-interface
+      dockerfile: Dockerfile.crawler
+    container_name: dsea-crawler
+    working_dir: /telegram-interface
+    env_file:
+      - ../services/telegram-interface/.env.docker
+    command: python -m parsing.crawler.main
+    volumes:
+      - ../services/telegram-interface:/telegram-interface
+      - artifacts:/data/artifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   pnpm_store:
+  artifacts:
