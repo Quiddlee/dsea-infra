@@ -76,7 +76,7 @@ services:
     command: python -m parsing.crawler.main
     volumes:
       - ../services/telegram-interface:/telegram-interface
-      - artifacts:/data/artifacts
+      - artifacts:/telegram-interface/parsing/artifacts
     depends_on:
       postgres:
         condition: service_healthy
