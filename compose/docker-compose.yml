@@ -3,7 +3,7 @@ version: "3.9"
 name: dsea
 services:
   postgres:
-    image: postgres:18.1-alpine
+    image: pgvector/pgvector:pg18
     container_name: dsea-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
