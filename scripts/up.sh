@@ -6,7 +6,13 @@ cd "$ROOT_DIR"
 
 ./scripts/bootstrap.sh
 
+BUILD_FLAG=""
+if [[ "${1:-}" == "--build" ]]; then
+  BUILD_FLAG="--build"
+  shift
+fi
+
 docker compose \
   --env-file "$ROOT_DIR/.env" \
   -f compose/docker-compose.yml \
-  up --build
+  up $BUILD_FLAG "$@"
