@@ -59,6 +59,9 @@ services:
     working_dir: /telegram-interface
     env_file:
       - ../services/telegram-interface/.env.docker
+    volumes:
+      - ../services/telegram-interface:/telegram-interface
+      - artifacts:/telegram-interface/parsing/artifacts
     depends_on:
       postgres:
         condition: service_healthy
